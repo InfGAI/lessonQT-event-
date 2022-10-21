@@ -46,15 +46,15 @@ class Example(QWidget):
             self.image.move(event.x(), event.y())
 
     def mousePressEvent(self, event) -> None:
-        X, Y = event.x(), event.y()
-        self.dots.append((X, Y))
+        x, y = event.x(), event.y()
+        self.dots.append((x, y))
         if event.buttons() == Qt.LeftButton:
-            self.image.move(X, Y)
+            self.image.move(x, y)
             self.image.show()
 
     def mouseReleaseEvent(self, event) -> None:
-        X, Y = event.x(), event.y()
-        self.dots.append((X, Y))
+        x, y = event.x(), event.y()
+        self.dots.append((x, y))
         self.repaint()
         if event.button() == Qt.LeftButton:
             self.image.hide()

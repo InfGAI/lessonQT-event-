@@ -32,15 +32,6 @@ class Example(QWidget):
         self.image.setPixmap(QPixmap("arrgn.png"))
         self.image.hide()
 
-    def paintEvent(self, event) -> None:
-        qp = QPainter()
-        qp.begin(self)  # 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
-        if len(self.dots) >= 2:
-            for i in range(0, len(self.dots), 2):
-                x1, y1, x2, y2 = *self.dots[i], *self.dots[i + 1]
-                qp.drawLine(x1, y1, x2, y2)
-        qp.end()
-
     def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
         if event.buttons() == Qt.LeftButton:
             self.image.move(event.x(), event.y())
@@ -77,6 +68,12 @@ class Example(QWidget):
         qp = QPainter()
         qp.begin(self)
         self.drawCircle(qp)
+        qp.end()
+        qp.begin(self)  # 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
+        if len(self.dots) >= 2:
+            for i in range(0, len(self.dots), 2):
+                x1, y1, x2, y2 = *self.dots[i], *self.dots[i + 1]
+                qp.drawLine(x1, y1, x2, y2)
         qp.end()
 
     def drawCircle(self, qp):

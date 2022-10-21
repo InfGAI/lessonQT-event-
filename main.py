@@ -23,37 +23,38 @@ class Example(QWidget):
         self.circleSize = 0
         self.initUI()
         self.dots = list()
+        self.image = QLabel(self)
 
     def initUI(self):
         self.setGeometry(300, 300, 300, 300)
         self.setWindowTitle('Координаты')
 
-        self.image = QLabel(self)
         self.image.setPixmap(QPixmap("arrgn.png"))
         self.image.hide()
 
     def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
+        # If user is moving mouse, image will follow cursor
+        # Image will be drawn if LMB is pressed
         if event.buttons() == Qt.LeftButton:
             self.image.move(event.x(), event.y())
 
-    def mousePressEvent(self, event) -> None:
+    def mousePressEvent(self, event: QtGui.QPaintEvent) -> None:
         x, y = event.x(), event.y()
         self.dots.append((x, y))
+        # If LMB is pressed, image will be shown
         if event.buttons() == Qt.LeftButton:
             self.image.move(x, y)
             self.image.show()
 
-    def mouseReleaseEvent(self, event) -> None:
+    def mouseReleaseEvent(self, event: QtGui.QPaintEvent) -> None:
         x, y = event.x(), event.y()
         self.dots.append((x, y))
         self.repaint()
+        # When LMB left, image will be hidden
         if event.button() == Qt.LeftButton:
             self.image.hide()
 
-    def keyPressEvent(self, event):
-        if int(event.modifiers()) == (Qt.AltModifier + Qt.ShiftModifier):
-            if event.key == Qt.key_Q:
-                pass
+    def keyPressEvent(self, event: QtGui.QPaintEvent) -> None:
         # Adding and removing circles
         if event.key() == Qt.Key_Z:
             self.circleSize += 1
@@ -64,11 +65,14 @@ class Example(QWidget):
                 self.circleSize = 0
             self.update()
 
-    def paintEvent(self, e):
+    def paintEvent(self, event: QtGui.QPaintEvent) -> None:
         qp = QPainter()
+
+        # Draw Circle on Z, E pressed
         qp.begin(self)
         self.drawCircle(qp)
         qp.end()
+
         qp.begin(self)  # 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
         if len(self.dots) >= 2:
             for i in range(0, len(self.dots), 2):
@@ -76,7 +80,7 @@ class Example(QWidget):
                 qp.drawLine(x1, y1, x2, y2)
         qp.end()
 
-    def drawCircle(self, qp):
+    def drawCircle(self, qp: QPainter) -> None:
         qp.setBrush(Qt.black)
         qp.drawEllipse(150 - self.circleSize // 2, 150 - self.circleSize // 2, self.circleSize, self.circleSize)
 

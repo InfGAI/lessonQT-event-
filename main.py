@@ -1,11 +1,10 @@
 import sys
-import traceback
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPainter
-from PyQt5.QtWidgets import QWidget, QApplication, QLabel
+from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QPushButton,
+                             QSizePolicy, QLabel, QFontDialog, QApplication)
 
-# При нажатии кнопочки q, окно закрывается
+
 
 
 def excepthook(exc_type, exc_value, exc_tb):
@@ -19,12 +18,15 @@ def excepthook(exc_type, exc_value, exc_tb):
 sys.excepthook = excepthook
 
 
+
 class Example(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
         self.dots = (10,10)
         self.circles = [(self.dots[0],self.dots[1], 50, 50)]
+        self.text = QLabel('we are all lazy', self)
+        self.text.move(170, 40)
 
     def initUI(self):
         self.setGeometry(300, 300, 300, 300)
@@ -50,8 +52,17 @@ class Example(QWidget):
         qp.end()
 
 
+    def showDialog(self):
+        font, ok = QFontDialog.getFont()
+        if ok:
+            self.text.setFont(font)
+
+    def keyPressEvent(self, event) -> None:
+        if event.key() == Qt.Key_P:
+            self.showDialog()
+
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = Example()
-    ex.show()
-    sys.exit(app.exec())
+    sys.exit(app.exec_())

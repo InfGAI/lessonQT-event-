@@ -4,7 +4,7 @@ from PyQt5 import Qt
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from random import randrange
-from PIL import Image, ImageDraw
+from PIL import Image
 
 
 class Example(QWidget):

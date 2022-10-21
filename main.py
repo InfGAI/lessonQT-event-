@@ -1,11 +1,9 @@
 import sys
 
-from itertools import combinations
-from PyQt5 import Qt
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPainter
 from PyQt5.QtWidgets import QWidget, QApplication, QLabel
-from PyQt5.QtGui import QPainter, QColor
+from PyQt5.QtGui import QPainter, QPixmap
+from PyQt5 import QtGui
 
 
 class Example(QWidget):
@@ -19,9 +17,9 @@ class Example(QWidget):
         self.setGeometry(300, 300, 300, 300)
         self.setWindowTitle('Координаты')
 
-        self.coords = QLabel(self)
-        self.coords.setText("Координаты: None, None")
-        self.coords.move(30, 30)
+        self.image = QLabel(self)
+        self.image.setPixmap(QPixmap("arrgn.png"))
+        self.image.hide()
 
     def paintEvent(self, event) -> None:
         qp = QPainter()
@@ -32,14 +30,23 @@ class Example(QWidget):
                 qp.drawLine(x1, y1, x2, y2)
         qp.end()
 
+    def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
+        if event.buttons() == Qt.LeftButton:
+            self.image.move(event.x(), event.y())
+
     def mousePressEvent(self, event) -> None:
         X, Y = event.x(), event.y()
         self.dots.append((X, Y))
+        if event.buttons() == Qt.LeftButton:
+            self.image.move(X, Y)
+            self.image.show()
 
     def mouseReleaseEvent(self, event) -> None:
         X, Y = event.x(), event.y()
         self.dots.append((X, Y))
         self.repaint()
+        if event.button() == Qt.LeftButton:
+            self.image.hide()
 
     def keyPressEvent(self, event):
         if int(event.modifiers()) == (Qt.AltModifier + Qt.ShiftModifier):

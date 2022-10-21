@@ -1,6 +1,9 @@
 import sys
 
+from random import randint as rint
 from PyQt5 import Qt
+from PyQt5 import QtCore
+from PyQt5.QtGui import QPalette, QColor
 from PyQt5.QtWidgets import QWidget, QApplication, QLabel
 
 
@@ -20,11 +23,11 @@ class Example(QWidget):
     def mouseMoveEvent(self, event):
         self.coords.setText(f"Координаты: {event.x()}, {event.y()}")
 
-    def keyPressEvent(self, event):
-        if int(event.modifiers()) == (Qt.AltModifier + Qt.ShiftModifier):
-            if event.key() == Qt.Key_Q:
-                pass
-        # code
+    def mousePressEvent(self, event):
+        if event.button() == QtCore.Qt.LeftButton:
+            palette = QPalette()
+            palette.setColor(QPalette.Background, QColor(rint(0, 255), rint(0, 255), rint(0, 255)))
+            self.setPalette(palette)
 
 
 if __name__ == '__main__':

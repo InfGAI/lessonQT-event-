@@ -70,7 +70,7 @@ class Example(QWidget):
 
         # Draw Circle on Z, E pressed
         qp.begin(self)
-        self.drawCircle(qp)
+        self.draw_circle(qp)
         qp.end()
 
         qp.begin(self)  # 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
@@ -80,7 +80,7 @@ class Example(QWidget):
                 qp.drawLine(x1, y1, x2, y2)
         qp.end()
 
-    def drawCircle(self, qp: QPainter) -> None:
+    def draw_circle(self, qp: QPainter) -> None:
         qp.setBrush(Qt.black)
         qp.drawEllipse(150 - self.circleSize // 2, 150 - self.circleSize // 2, self.circleSize, self.circleSize)
 

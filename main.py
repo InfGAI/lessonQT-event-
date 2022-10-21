@@ -3,7 +3,18 @@ import sys
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QApplication, QLabel
 from PyQt5.QtGui import QPainter, QPixmap
-from PyQt5 import QtGui
+from PyQt5 import QtGui, QtCore
+
+
+class ExceptionHandler(QtCore.QObject):
+    errorSignal = QtCore.pyqtSignal()
+
+    def __init__(self):
+        super(ExceptionHandler, self).__init__()
+
+    def handler(self, exctype, value, traceback):
+        self.errorSignal.emit()
+        sys._excepthook(exctype, value, traceback)
 
 
 class Example(QWidget):
@@ -74,6 +85,9 @@ class Example(QWidget):
 
 
 if __name__ == '__main__':
+    exceptionHandler = ExceptionHandler()
+    sys._excepthook = sys.excepthook
+    sys.excepthook = exceptionHandler.handler
     app = QApplication(sys.argv)
     ex = Example()
     ex.show()

@@ -1,94 +1,56 @@
 import sys
+import traceback
 
 from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPainter
 from PyQt5.QtWidgets import QWidget, QApplication, QLabel
-from PyQt5.QtGui import QPainter, QPixmap
-from PyQt5 import QtGui, QtCore
+
+# При нажатии кнопочки q, окно закрывается
 
 
-class ExceptionHandler(QtCore.QObject):
-    errorSignal = QtCore.pyqtSignal()
+def excepthook(exc_type, exc_value, exc_tb):
+    tb = "".join(traceback.format_exception(exc_type, exc_value, exc_tb))
+    print("error catched!:")
+    print("error message:\n", tb)
+    QApplication.quit()
+    # or QtWidgets.QApplication.exit(0)
 
-    def __init__(self):
-        super(ExceptionHandler, self).__init__()
 
-    def handler(self, exctype, value, traceback):
-        self.errorSignal.emit()
-        sys._excepthook(exctype, value, traceback)
+sys.excepthook = excepthook
 
 
 class Example(QWidget):
     def __init__(self):
         super().__init__()
-        self.circleSize = 0
         self.initUI()
-        self.dots = list()
-        self.image = QLabel(self)
+        self.dots = (10,10)
+        self.circles = [(self.dots[0],self.dots[1], 50, 50)]
 
     def initUI(self):
         self.setGeometry(300, 300, 300, 300)
         self.setWindowTitle('Координаты')
 
-        self.image.setPixmap(QPixmap("arrgn.png"))
-        self.image.hide()
+        self.coords = QLabel(self)
+        self.coords.setText("Координаты: None, None")
+        self.coords.move(30, 30)
 
-    def mouseMoveEvent(self, event: QtGui.QMouseEvent) -> None:
-        # If user is moving mouse, image will follow cursor
-        # Image will be drawn if LMB is pressed
-        if event.buttons() == Qt.LeftButton:
-            self.image.move(event.x(), event.y())
+    def mousePressEvent(self, event):
+        if event.button() == Qt.RightButton:
+            self.coords.setText(f"Координаты: {event.x()}, {event.y()}")
+            X, Y = event.x(), event.y()
+            self.dots = (X, Y)
+            self.circles.append((self.dots[0],self.dots[1], 50, 50))
+            self.repaint()
 
-    def mousePressEvent(self, event: QtGui.QPaintEvent) -> None:
-        x, y = event.x(), event.y()
-        self.dots.append((x, y))
-        # If LMB is pressed, image will be shown
-        if event.buttons() == Qt.LeftButton:
-            self.image.move(x, y)
-            self.image.show()
-
-    def mouseReleaseEvent(self, event: QtGui.QPaintEvent) -> None:
-        x, y = event.x(), event.y()
-        self.dots.append((x, y))
-        self.repaint()
-        # When LMB left, image will be hidden
-        if event.button() == Qt.LeftButton:
-            self.image.hide()
-
-    def keyPressEvent(self, event: QtGui.QPaintEvent) -> None:
-        # Adding and removing circles
-        if event.key() == Qt.Key_Z:
-            self.circleSize += 1
-            self.update()
-        if event.key() == Qt.Key_X:
-            self.circleSize -= 1
-            if self.circleSize < 0:
-                self.circleSize = 0
-            self.update()
-
-    def paintEvent(self, event: QtGui.QPaintEvent) -> None:
+    def paintEvent(self, event) -> None:
         qp = QPainter()
-
-        # Draw Circle on Z, E pressed
-        qp.begin(self)
-        self.draw_circle(qp)
-        qp.end()
-
         qp.begin(self)  # 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
-        if len(self.dots) >= 2:
-            for i in range(0, len(self.dots), 2):
-                x1, y1, x2, y2 = *self.dots[i], *self.dots[i + 1]
-                qp.drawLine(x1, y1, x2, y2)
+        for i in self.circles:
+            qp.drawEllipse(i[0], i[1], i[2], i[3])
         qp.end()
-
-    def draw_circle(self, qp: QPainter) -> None:
-        qp.setBrush(Qt.black)
-        qp.drawEllipse(150 - self.circleSize // 2, 150 - self.circleSize // 2, self.circleSize, self.circleSize)
 
 
 if __name__ == '__main__':
-    exceptionHandler = ExceptionHandler()
-    sys._excepthook = sys.excepthook
-    sys.excepthook = exceptionHandler.handler
     app = QApplication(sys.argv)
     ex = Example()
     ex.show()

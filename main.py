@@ -61,6 +61,7 @@ class Example(QWidget):
         if event.key() == Qt.Key_F: # обработки нажатия F
             self.showDialog()
         if event.key() == Qt.Key_C:  # обработки нажатия C
+            self.ch_win=ChWin()
             self.ch_win.show()
 
         # code
